@@ -1,1 +1,4 @@
 venv3/
+hex_packages/
+.idea/
+__pycache__/
