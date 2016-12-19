@@ -23,12 +23,15 @@ def topic_homepage(topic='all'):
 @app.route('/i/<issue_id>')
 def issue_page(issue_id=''):
     return issue_id
+
 @app.route('/wh/github', methods=['POST'])
 def webhook_github():
-    print(request.headers)
-    if request.headers.get('X-GitHub-Event') == 'push':
+    if not verify_webhook_signature(request.headers.get('X-Hub-Signature'), request.data):
+        return "OFF"
+
+    event = request.headers.get('X-GitHub-Event')
+    if  event == 'push':
         os.system("git pull")
-    print(verify_webhook_signature(request.headers.get('X-Hub-Signature'), request.data))
     return "OK"
 
 def verify_webhook_signature(sig, payload):
