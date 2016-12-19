@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PyHub Collection</title>
+</head>
+<body>
+{% for topic in topics %}
+    <ul>
+        <li><a href="{{ url_for('topic_homepage', topic=topic.slug) }}">{{ topic.name }}</a></li>
+    </ul>
+{% endfor %}
+</body>
+</html>

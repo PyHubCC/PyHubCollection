@@ -2,3 +2,5 @@ venv3/
 hex_packages/
 .idea/
 __pycache__/
+.env
+*.pyc
