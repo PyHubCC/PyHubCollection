@@ -1,8 +1,7 @@
 from flask import Flask, render_template, request, json
 from flask_sqlalchemy import SQLAlchemy
 import os
-import hashlib
-import sys
+import hmac, hashlib
 
 app = Flask(__name__)
 app.config.from_pyfile('app.cfg')
@@ -26,13 +25,15 @@ def issue_page(issue_id=''):
     return issue_id
 @app.route('/wh/github', methods=['POST'])
 def webhook_github():
-    if request.headers['X-GitHub-Event'] == 'push':
-        os.system("git pull")
     print(request.headers)
+    if request.headers.get('X-GitHub-Event') == 'push':
+        os.system("git pull")
     print(verify_webhook_signature(request.headers['X-Hub-Signature'], request.data))
     return "OK"
 
 def verify_webhook_signature(sig, payload):
-    sha = hashlib.sha1(GITHUB_SEC + payload)
-
-    return sig == 'sha1=' + sha.hexdigest()
+    sha_name, signature = sig.split("=")
+    if sha_name != "sha":
+        return False
+    mac = hmac.new(GITHUB_SEC, msg=payload, digestmod=hashlib.sha1)
+    return hmac.compare_digest(mac.hexdigest(), signature)
