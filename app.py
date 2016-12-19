@@ -9,7 +9,7 @@ db = SQLAlchemy(app)
 
 GITHUB_SEC = os.environ.get('GITHUB_WH_SEC')
 
-from models import Topic
+from models import Topic, Issue
 
 @app.route('/')
 def hello_world():
@@ -18,7 +18,9 @@ def hello_world():
 @app.route('/t')
 @app.route('/t/<topic>')
 def topic_homepage(topic='all'):
-    return topic
+    topic_info = Topic.query.filter_by(slug=topic).first()
+    issues = Issue.query.filter_by(topic=topic).limit(20)
+    return render_template("topic.html", topic = topic_info, issues = issues)
 
 @app.route('/i/<issue_id>')
 def issue_page(issue_id=''):
