@@ -28,7 +28,8 @@ def webhook_github():
     print(request.headers)
     if request.headers.get('X-GitHub-Event') == 'push':
         os.system("git pull")
-    print(verify_webhook_signature(request.headers['X-Hub-Signature'], request.data))
+    print(type(request.headers.get('X-Hub-Signature')))
+    print(verify_webhook_signature(request.headers['X-Hub-Signature'].decode(), request.data))
     return "OK"
 
 def verify_webhook_signature(sig, payload):
