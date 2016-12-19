@@ -24,5 +24,5 @@ def issue_page(issue_id=''):
     return issue_id
 @app.route('/wh/github', methods=['POST'])
 def webhook_github():
-    print(request.body)
-    return json.loads(request.body)
+    print(request.data)
+    return json.loads(request.data)
