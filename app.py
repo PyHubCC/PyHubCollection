@@ -33,7 +33,7 @@ def webhook_github():
 
 def verify_webhook_signature(sig, payload):
     sha_name, signature = sig.split("=")
-    if sha_name != "sha":
+    if sha_name != "sha1":
         return False
     mac = hmac.new(GITHUB_SEC.encode(), msg=payload, digestmod=hashlib.sha1)
     return hmac.compare_digest(mac.hexdigest(), signature)
