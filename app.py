@@ -40,7 +40,7 @@ def webhook_github():
     action = payload.get("action")
     if "issues" == event:
         # action: opened
-        if "rainyear" != payload.get("user").get("login"):
+        if "rainyear" != payload.get("issue").get("user").get("login"):
             return make_response("You're not authorized", 403)
         if "opened" == action:
             try:
