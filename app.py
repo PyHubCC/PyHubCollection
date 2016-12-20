@@ -42,10 +42,10 @@ def webhook_github():
     payload = json.loads(request.data.decode())
     action = payload.get("action")
     if "issues" == event:
-        # action: opened
+        # action: opened, reopened
         if verify_webhook_author(payload):
             return make_response("You're not authorized", 403)
-        if "opened" == action:
+        if "opened" == action or "reopened" == action:
             try:
                 i_title = payload.get("issue").get("title")
                 i_html_id = payload.get("issue").get("number")
