@@ -18,7 +18,7 @@ class Issue(db.Model):
     url = db.Column(db.String(255))
     excerpt = db.Column(db.Text)
     face = db.Column(db.String(255))
-    col_date = db.Column(db.DateTime, default=func.now)
+    col_date = db.Column(db.DateTime, default=func.now())
     pub_date = db.Column(db.DateTime)
 
     comment = db.Column(db.Text)
