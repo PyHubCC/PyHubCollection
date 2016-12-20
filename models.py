@@ -13,7 +13,7 @@ MAP = {
 class Issue(db.Model):
     __tablename__ = "issues"
     id = db.Column('issue_id', db.Integer, primary_key=True, autoincrement=True)
-    html_id = db.Column(db.Integer)
+    html_id = db.Column(db.Integer, unique=True)
     title = db.Column(db.String(250))
     url = db.Column(db.String(255))
     excerpt = db.Column(db.Text)
@@ -31,7 +31,7 @@ class Issue(db.Model):
 
     is_public = db.Column(db.Boolean, server_default='0')
     topic_name = db.Column(db.String(64))
-    topic_slug = db.Column(db.String(64))
+    topic_slug = db.Column(db.String(64), db.ForeignKey("topics.slug"))
     def __init__(self, title, html_id, excerpt, url, src):
         self.title = title
         self.html_id = html_id
@@ -54,7 +54,6 @@ class Topic(db.Model):
         self.name = name
         self.slug = slug
         self.rank = rank
-
 def init_topic():
     for name, slug in MAP.items():
         topic = Topic(name, slug)
