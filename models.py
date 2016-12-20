@@ -30,8 +30,8 @@ class Issue(db.Model):
     share = db.Column(db.Integer, server_default='0')
 
     is_public = db.Column(db.Boolean, server_default='0')
-    topic_name = db.Column(db.String(64), nullable=False)
-    topic_slug = db.Column(db.String(64), nullable=False)
+    topic_name = db.Column(db.String(64))
+    topic_slug = db.Column(db.String(64))
     def __init__(self, title, html_id, excerpt, url, src):
         self.title = title
         self.html_id = html_id
