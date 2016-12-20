@@ -60,6 +60,8 @@ def webhook_github():
         elif "labeled" == action:
             i_html_id = payload.get("issue").get("number")
             issue = Issue.query.filter_by(html_id=i_html_id).first()
+            if not issue:
+                return make_response("No such issue {}".format(i_html_id), 500)
             labels = payload.get("issue").get("labels")
             for label in labels:
                 lname = label.get("name")
