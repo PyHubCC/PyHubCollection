@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, json
+from flask import Flask, render_template, request, json, make_response
 from flask_sqlalchemy import SQLAlchemy
 import os
 import hmac, hashlib
+import html, re
 
 app = Flask(__name__)
 app.config.from_pyfile('app.cfg')
@@ -30,11 +31,34 @@ def issue_page(issue_id=''):
 def webhook_github():
     if not verify_webhook_signature(request.headers.get('X-Hub-Signature'), request.data):
         return "OFF"
-
     event = request.headers.get('X-GitHub-Event')
-    if  event == 'push':
+    if "push" == event:
         os.system("git pull")
-    return "OK"
+        return "Pulled"
+
+    payload = json.loads(request.data.decode())
+    action = payload.get("action")
+    if "issues" == event:
+        # action: opened
+        if "rainyear" != payload.get("user").get("login"):
+            return make_response("You're not authorized", 403)
+        if "opened" == action:
+            try:
+                i_title = payload.get("issue").get("title")
+                i_html_id = payload.get("html_url")
+                i_body = html.unescape(payload.get("issue").get("body"))
+                i_excerpt = i_body.split('<br>')[1].strip()
+                matched = re.findall(r'src="(.*?)"[\s\S]*?via Pocket (.*?)<', i_body)
+                new_issue = Issue(i_title, i_html_id, i_excerpt, matched[0][1], matched[0][0])
+                db.session.add(new_issue)
+                db.session.commit()
+            except KeyError:
+                return make_response("KeyError", 500)
+
+    elif "issue_comment" == event:
+        # action: "created", "edited", or "deleted"
+        pass
+    return "Event received!"
 
 def verify_webhook_signature(sig, payload):
     sha_name, signature = sig.split("=")
